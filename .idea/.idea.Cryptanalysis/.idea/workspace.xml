@@ -11,15 +11,20 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3B80BA68-A05C-4659-AD98-BA2776496204/A/HashSet.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/2DDB40B0-7380-4610-8973-CCF11EC57CDD/3DC/List.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/lab-1/MainWindow.xaml" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/lab-1/PolyAlphabetSolver.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/lab-1/MainWindow.xaml.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/lab-1/MonoAlphabetSolver.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
-    <changedPaths>
-      <option value="$PROJECT_DIR$/lab-1/MonoAlphabetSolver.cs" />
-      <option value="$PROJECT_DIR$/lab-1/MainWindow.xaml" />
-      <option value="$PROJECT_DIR$/lab-1/MainWindow.xaml.cs" />
-    </changedPaths>
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/lab-1/MonoAlphabetSolver.cs" />
+        <option value="$PROJECT_DIR$/lab-1/PolyAlphabetSolver.cs" />
+        <option value="$PROJECT_DIR$/lab-1/MainWindow.xaml" />
+        <option value="$PROJECT_DIR$/lab-1/MainWindow.xaml.cs" />
+      </list>
+    </option>
   </component>
   <component name="ProjectId" id="1xdXhQNtZX1IEkE4zu6bRVooWpv" />
   <component name="ProjectViewState">
@@ -55,7 +60,10 @@
       </method>
     </configuration>
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="682ada97-76ae-44e6-8418-ce8fbc16e3fc" name="Default Changelist" comment="" />
@@ -66,6 +74,9 @@
       <workItem from="1630686066205" duration="1000" />
       <workItem from="1630686106338" duration="11461000" />
       <workItem from="1630745809598" duration="7310000" />
+      <workItem from="1630869533509" duration="188000" />
+      <workItem from="1631521710118" duration="148000" />
+      <workItem from="1631523063341" duration="8958000" />
     </task>
     <servers />
   </component>
@@ -73,5 +84,27 @@
   <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state width="1323" height="2" key="GridCell.Tab.0.bottom" timestamp="1631533017670">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state width="1323" height="2" key="GridCell.Tab.0.bottom/0.0.1366.738@0.0.1366.738" timestamp="1631533017670" />
+    <state width="1323" height="2" key="GridCell.Tab.0.center" timestamp="1631533017670">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state width="1323" height="2" key="GridCell.Tab.0.center/0.0.1366.738@0.0.1366.738" timestamp="1631533017670" />
+    <state width="1323" height="2" key="GridCell.Tab.0.left" timestamp="1631533017670">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state width="1323" height="2" key="GridCell.Tab.0.left/0.0.1366.738@0.0.1366.738" timestamp="1631533017670" />
+    <state width="1323" height="2" key="GridCell.Tab.0.right" timestamp="1631533017670">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state width="1323" height="2" key="GridCell.Tab.0.right/0.0.1366.738@0.0.1366.738" timestamp="1631533017670" />
+    <state width="498" height="446" key="SwitcherDM" timestamp="1631525175243">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state width="498" height="446" key="SwitcherDM/0.0.1366.738@0.0.1366.738" timestamp="1631525175243" />
   </component>
 </project>

@@ -6,18 +6,11 @@ using System.Security.Policy;
 
 namespace lab_1
 {
-    public class KeyValueComparer : IComparer<KeyValuePair<char, int>>
-    {
-        public int Compare(KeyValuePair<char, int> x, KeyValuePair<char, int> y)
-        {
-            return -x.Value.CompareTo(y.Value);
-        }
-    }
     public static class MonoAlphabetSolver
     {
         public static KeyValuePair<char, int>[] GetUniqueCharacters(string text)
         {
-            text = text.Replace(" ", String.Empty);
+            text = text.Replace(" ", string.Empty);
             var uniqueChars = new Dictionary<char, int>();
 
             foreach (var character in text)
@@ -28,7 +21,8 @@ namespace lab_1
             
             var arr = uniqueChars.ToArray();
             
-            Array.Sort(arr, new KeyValueComparer());
+            Array.Sort(arr, (x, y) 
+                => y.Value - x.Value);
 
             return arr;
         }

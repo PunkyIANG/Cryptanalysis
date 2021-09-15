@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:lab_1"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <StackPanel>
-        <StackPanel.Resources>
+    <TabControl Name="RootTabControl">
+        <TabControl.Resources>
             <Style TargetType="FrameworkElement" x:Key="CommonStyle">
                 <Setter Property="Margin" Value="10,5,0,0" />
                 <Setter Property="Height" Value="20" />
@@ -15,47 +15,74 @@
                 <Setter Property="VerticalAlignment" Value="Top" />
                 <Setter Property="HorizontalAlignment" Value="Left" />
             </Style>
-            
-            <Style TargetType="TextBox"   BasedOn="{StaticResource CommonStyle}">
-                <Setter Property="Width" Value="450"/>
-                <Setter Property="Height" Value="100"/>
-                <Setter Property="TextWrapping" Value="Wrap"/>
+
+            <Style TargetType="TextBox" BasedOn="{StaticResource CommonStyle}">
+                <Setter Property="Width" Value="450" />
+                <Setter Property="Height" Value="100" />
+                <Setter Property="TextWrapping" Value="Wrap" />
             </Style>
-            
-            <Style TargetType="Button"    BasedOn="{StaticResource CommonStyle}" >
-                <Setter Property="Width" Value="143"/>
+
+            <Style TargetType="Button" BasedOn="{StaticResource CommonStyle}">
+                <Setter Property="Width" Value="143" />
             </Style>
-            
-            <Style TargetType="TextBlock" BasedOn="{StaticResource CommonStyle}"/>
-            
+
+            <Style TargetType="TextBlock" BasedOn="{StaticResource CommonStyle}" />
+
             <Style TargetType="TextBlock" x:Key="CharacterTextBlock" BasedOn="{StaticResource CommonStyle}">
                 <Setter Property="Width" Value="30" />
                 <Setter Property="Margin" Value="0" />
-                <Setter Property="TextAlignment" Value="Center"/>
+                <Setter Property="TextAlignment" Value="Center" />
             </Style>
 
             <Style TargetType="TextBox" x:Key="CharacterTextBox" BasedOn="{StaticResource CommonStyle}">
                 <Setter Property="Width" Value="30" />
                 <Setter Property="Margin" Value="0" />
-                <Setter Property="TextAlignment" Value="Center"/>
+                <Setter Property="TextAlignment" Value="Center" />
             </Style>
+        </TabControl.Resources>
+        
+        
+        <TabItem Header="Monoalphabet" TabIndex="0">
+            <StackPanel>
+                <TextBlock>Text criptat:</TextBlock>
+                <TextBox Name="MonoEncryptedText" CharacterCasing="Upper" PreviewTextInput="RestrictAlphabet" />
+                <TextBlock>Text clar:</TextBlock>
+                <TextBox Name="MonoClearText" CharacterCasing="Upper" PreviewTextInput="RestrictAlphabet" />
 
-        </StackPanel.Resources>
-        
-        <TextBlock>Text criptat:</TextBlock>
-        <TextBox Name="EncryptedText" CharacterCasing="Upper" PreviewTextInput="RestrictAlphabet"/>
-        <TextBlock>Text clar:</TextBlock>
-        <TextBox Name="ClearText" CharacterCasing="Upper" PreviewTextInput="RestrictAlphabet"/>
-        
-        <StackPanel Orientation="Horizontal">
-            <Button Click="FindFrequency">Gaseste frecventa</Button>
-            <Button Name="ReplaceCharsBtn" Click="ReplaceChars" IsEnabled="False">
-                Inlocuieste text
-            </Button>
-            <Button Click="AddSpaces">Spatii standartizate</Button>
-        </StackPanel>
-        
-        <ContentControl Name="RootContent"/>
+                <StackPanel Orientation="Horizontal">
+                    <Button Click="FindFrequency">Gaseste frecventa</Button>
+                    <Button Name="ReplaceCharsBtn" Click="ReplaceChars" IsEnabled="False">
+                        Inlocuieste text
+                    </Button>
+                    <Button Click="AddSpaces">Spatii standartizate</Button>
+                    <Button Name="MonoReturnPoly" Visibility="Hidden" Click="ApplyToPoly">Aplica la polialfabet</Button>
+                </StackPanel>
 
-    </StackPanel>
+                <ContentControl Name="RootContent" />
+
+            </StackPanel>
+        </TabItem>
+
+        <TabItem Header="Polyalphabet" TabIndex="1">
+            <StackPanel>
+                <TextBlock>Text criptat:</TextBlock>
+                <TextBox Name="PolyEncryptedText" CharacterCasing="Upper" PreviewTextInput="RestrictAlphabet" />
+                
+                <StackPanel Orientation="Horizontal">
+                    <Button Name="GetKeyLength" Click="CalcKeyLength">
+                        Afla lungimea cheii
+                    </Button>
+                    <TextBlock Width="80">Lungime cheie:</TextBlock>
+                    <TextBox Name="PolyKeyLength" Style="{StaticResource CharacterTextBox}" Margin="10,5,0,0"/>
+                    <Button Name="PolySplitText" Click="SplitText">
+                        Separa text
+                    </Button>
+                    
+                </StackPanel>
+                <TextBlock Name="PolyKeyLengthResult"/>
+                
+                <ContentControl Name="PolySplitTextsContainer" />
+            </StackPanel>
+        </TabItem>
+    </TabControl>
 </Window>

@@ -23,9 +23,13 @@ namespace lab_1
     /// </summary>
     public partial class MainWindow : Window
     {
+        private FontFamily consolas = new FontFamily("Consolas");
+        
         public MainWindow()
         {
             InitializeComponent();
+
+            // PolyAlphabetSolver.SplitToMonoAlphabet("KTPCZNOOGHVFBTZVSBIOVTAGMKRLVAKMXAVUSTTPCNLCDVHXEOCPECPPHXHLNLFCKNYBPSQVXYPVHAKTAOLUHTITPDCSBPAJEAQZRIMCSYIMJHRABPPPHBUSKVXTAJAMHLNLCWZVSAQYVOYDLKNZLHWNWKJGTAGKQCMQYUWXTLRUSBSGDUAAJEYCJVTACAKTPCZPTJWPVECCBPDBELKFBVIGCTOLLANPKKCXVOGYVQBNDMTLCTBVPHIMFPFNMDLEOFGQCUGFPEETPKYEGVHYARVOGYVQBNDWKZEHTTNGHBOIWTMJPUJNUADEZKUUHHTAQFCCBPDBELCLEVOGTBOLEOGHBUEWVOGM ", 5);
         }
 
         private KeyValuePair<char, int>[] _textChars;
@@ -33,16 +37,16 @@ namespace lab_1
 
         private void FindFrequency(object sender, RoutedEventArgs e)
         {
-            _textChars = MonoAlphabetSolver.GetUniqueCharacters(EncryptedText.Text);
+            _textChars = MonoAlphabetSolver.GetUniqueCharacters(MonoEncryptedText.Text);
 
             var characterGrid = new Grid();
             
             var charSum = 0;
 
-            foreach (var keyValuePair in _textChars)
+            foreach (var (key, value) in _textChars)
             {
                 characterGrid.ColumnDefinitions.Add(new ColumnDefinition());
-                charSum += keyValuePair.Value;
+                charSum += value;
             }
 
             _overrideChars = new TextBox[_textChars.Length];
@@ -52,11 +56,11 @@ namespace lab_1
 
             for (int i = 0; i < _textChars.Length; i++)
             {
-                var keyValuePair = _textChars[i];
+                var (key, value) = _textChars[i];
                 
                 var characterTextBlock = new TextBlock
                 {
-                    Text = keyValuePair.Key.ToString(),
+                    Text = key.ToString(),
                     Style = (Style) Resources["CharacterTextBlock"]
                 };
                 
@@ -68,7 +72,7 @@ namespace lab_1
 
                 var freqNumTextBlock = new TextBlock
                 {
-                    Text = keyValuePair.Value.ToString(),
+                    Text = value.ToString(),
                     Style = (Style) Resources["CharacterTextBlock"]
                 };
                 
@@ -79,7 +83,7 @@ namespace lab_1
                 
                 var freqPerTextBlock = new TextBlock
                 {
-                    Text = (100f * keyValuePair.Value / charSum).ToString("0.0"),
+                    Text = (100f * value / charSum).ToString("0.0"),
                     Style = (Style) Resources["CharacterTextBlock"]
                 };
 
@@ -91,7 +95,7 @@ namespace lab_1
 
                 var replacementTextBox = new TextBox
                 {
-                    Name = keyValuePair.Key + "replacement",
+                    Name = key + "replacement",
                     Style = (Style) Resources["CharacterTextBox"],
                     CharacterCasing = CharacterCasing.Lower
                 };
@@ -111,7 +115,7 @@ namespace lab_1
 
         private void ReplaceChars(object sender, RoutedEventArgs e)
         {
-            var clearText = EncryptedText.Text;
+            var clearText = MonoEncryptedText.Text;
             
             for (int i = 0; i < _textChars.Length; i++)
             {
@@ -121,23 +125,101 @@ namespace lab_1
                 }
             }
 
-            ClearText.Text = clearText;
+            MonoClearText.Text = clearText;
         }
 
         private void AddSpaces(object sender, RoutedEventArgs e)
         {
-            var text = EncryptedText.Text;
+            var text = MonoEncryptedText.Text;
             text = text.Replace( " ", string.Empty);
             
             // TODO: actually add spaces
             
-            EncryptedText.Text = text;
+            MonoEncryptedText.Text = text;
         }
         
         private void RestrictAlphabet(object sender, TextCompositionEventArgs e)
         {
             var alphabetRegex = new Regex("[a-zA-Z]");
             e.Handled = !alphabetRegex.IsMatch(e.Text);
+        }
+
+        private void CalcKeyLength(object sender, RoutedEventArgs e)
+        {
+            var text = PolyEncryptedText.Text;
+
+            var result = PolyAlphabetSolver.GetKeyLength(text);
+
+            if (result.Count == 0)
+            {
+                PolyKeyLengthResult.Text = "Nu a fost gasita lungimea cheii";
+                return;
+            }
+            
+            var stringBuilder = new StringBuilder("Lungimea cheii: ");
+
+            foreach (var i in result)
+            {
+                stringBuilder.Append(i);
+                stringBuilder.Append(" ");
+            }
+
+            PolyKeyLengthResult.Text = stringBuilder.ToString();
+            PolyKeyLength.Text = result[0].ToString();
+        }
+
+        private void SplitText(object sender, RoutedEventArgs e)
+        {
+            var length = int.Parse(PolyKeyLength.Text);
+            var result = PolyAlphabetSolver.SplitToMonoAlphabet(PolyEncryptedText.Text, length);
+            
+            var stackpanel = new StackPanel();
+
+            foreach (var text in result)
+            {
+                var button = new Button
+                {
+                    Content = text,
+                    Width = MeasureString(text).Width + 10,
+                    FontFamily = consolas
+                };
+                button.Click += SplitTextToMono;
+                
+                stackpanel.Children.Add(button);
+            }
+
+            PolySplitTextsContainer.Content = stackpanel;
+        }
+        
+        private Size MeasureString(string candidate)
+        {
+            var formattedText = new FormattedText(
+                candidate,
+                CultureInfo.CurrentCulture,
+                FlowDirection.LeftToRight,
+                new Typeface(consolas, PolyKeyLengthResult.FontStyle, PolyKeyLengthResult.FontWeight, PolyKeyLengthResult.FontStretch),
+                PolyKeyLengthResult.FontSize,
+                Brushes.Black,
+                new NumberSubstitution(),
+                1);
+
+            return new Size(formattedText.Width, formattedText.Height);
+        }
+
+        private void SplitTextToMono(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var text = button?.Content as string;
+            
+            Dispatcher.BeginInvoke((Action)(() => RootTabControl.SelectedIndex = 0));
+            MonoEncryptedText.Text = text ?? "";
+            MonoReturnPoly.Visibility = Visibility.Visible;
+        }
+
+
+        private void ApplyToPoly(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
     }
 }
