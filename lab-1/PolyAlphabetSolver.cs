@@ -9,7 +9,10 @@ namespace lab_1
     {
         public static List<int> GetKeyLength(string text)
         {
-            text = text.Replace(" ", String.Empty);
+            foreach (var s in MonoAlphabetSolver.charBlacklist) 
+                text = text.Replace(s, string.Empty);
+            
+            
             var ngramDict = new Dictionary<string, List<int>>();
 
             for (int length = 3; length <= 4; length++)
@@ -89,6 +92,23 @@ namespace lab_1
             //     Console.WriteLine(result);
 
             return results;
+        }
+
+        public static string MonoToPoly(List<string> splits)
+        {
+            var keyLength = splits.Count;
+            
+            var stringBuilder = new StringBuilder();
+
+            var maxLength = splits.Select(split => split.Length).Max();
+
+
+            for (int i = 0; i < maxLength; i++)
+            for (int j = 0; j < keyLength; j++)
+                if (i < splits[j].Length)
+                    stringBuilder.Append(splits[j][i]);
+
+            return stringBuilder.ToString();
         }
     }
 }

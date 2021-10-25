@@ -23,18 +23,52 @@ namespace lab_1
     /// </summary>
     public partial class MainWindow : Window
     {
+        private KeyValuePair<char, int>[] _textChars;
+        private TextBox[] _overrideChars;
         private FontFamily consolas = new FontFamily("Consolas");
-        
+        private bool isPolyMode = false;
+
+        private List<string> splitStrings;
+        private List<Button> splitButtons;
+        private int currentSplit;
+
+        private readonly Dictionary<char, double> englishLetterDistribution = new Dictionary<char, double>()
+        {
+            {'E', 	0.1202},
+            {'T', 	0.0910},
+            {'A', 	0.0812},
+            {'O', 	0.0768},
+            {'I', 	0.0731},
+            {'N', 	0.0695},
+            {'S', 	0.0628},
+            {'R', 	0.0602},
+            {'H', 	0.0592},
+            {'D', 	0.0432},
+            {'L', 	0.0398},
+            {'U', 	0.0288},
+            {'C', 	0.0271},
+            {'M', 	0.0261},
+            {'F', 	0.0230},
+            {'Y', 	0.0211},
+            {'W', 	0.0209},
+            {'G', 	0.0203},
+            {'P', 	0.0182},
+            {'B', 	0.0149},
+            {'V', 	0.0111},
+            {'K', 	0.0069},
+            {'X', 	0.0017},
+            {'Q', 	0.0011},
+            {'J', 	0.0010},
+            {'Z', 	0.0007}
+        };
+
         public MainWindow()
         {
             InitializeComponent();
 
             // PolyAlphabetSolver.SplitToMonoAlphabet("KTPCZNOOGHVFBTZVSBIOVTAGMKRLVAKMXAVUSTTPCNLCDVHXEOCPECPPHXHLNLFCKNYBPSQVXYPVHAKTAOLUHTITPDCSBPAJEAQZRIMCSYIMJHRABPPPHBUSKVXTAJAMHLNLCWZVSAQYVOYDLKNZLHWNWKJGTAGKQCMQYUWXTLRUSBSGDUAAJEYCJVTACAKTPCZPTJWPVECCBPDBELKFBVIGCTOLLANPKKCXVOGYVQBNDMTLCTBVPHIMFPFNMDLEOFGQCUGFPEETPKYEGVHYARVOGYVQBNDWKZEHTTNGHBOIWTMJPUJNUADEZKUUHHTAQFCCBPDBELCLEVOGTBOLEOGHBUEWVOGM ", 5);
         }
-
-        private KeyValuePair<char, int>[] _textChars;
-        private TextBox[] _overrideChars;
-
+        
         private void FindFrequency(object sender, RoutedEventArgs e)
         {
             _textChars = MonoAlphabetSolver.GetUniqueCharacters(MonoEncryptedText.Text);
@@ -111,6 +145,9 @@ namespace lab_1
             RootContent.Content = characterGrid;
             
             ReplaceCharsBtn.IsEnabled = true;
+
+            if (isPolyMode)
+                MonoToPolyPanel.Visibility = Visibility.Visible;
         }
 
         private void ReplaceChars(object sender, RoutedEventArgs e)
@@ -125,17 +162,71 @@ namespace lab_1
                 }
             }
 
+            if (isPolyMode)
+                splitStrings[currentSplit] = clearText;
+
             MonoClearText.Text = clearText;
         }
 
-        private void AddSpaces(object sender, RoutedEventArgs e)
+        private void ExtrapolateChars(object sender, RoutedEventArgs e)
         {
-            var text = MonoEncryptedText.Text;
-            text = text.Replace( " ", string.Empty);
+            int charCount = 0;
+            const int letterCount = 26;
+
+            double[] deviations = new double[letterCount];
+
+            foreach (var (key, value) in _textChars)
+                charCount += value;
+
+            for (int shift = 0; shift < letterCount; shift++)
+            {
+                double shiftDeviation = 0;
+
+                for (var key = 'A'; key <= 'Z'; key++)
+                {
+                    int value = 0;
+                    
+                    char index = (char) ((key + shift - 'A' + 26) % 26 + 'A');
+
+                    foreach (var (c, val) in _textChars)
+                        if (c == key)
+                        {
+                            value = val;
+                            break;
+                        }
+                    
+
+                    var letterDeviation = (double) value / charCount - englishLetterDistribution[index];
+                    
+                    
+                    letterDeviation *= letterDeviation;
+
+                    shiftDeviation += letterDeviation;
+                }
+
+                deviations[shift] = shiftDeviation;
+                
+            }
+
+            var min = deviations[0];
+            var bestShift = 0;
+
+            for (int i = 0; i < deviations.Length; i++)
+            {
+                if (min > deviations[i])
+                {
+                    min = deviations[i];
+                    bestShift = i;
+                }
+            }
             
-            // TODO: actually add spaces
             
-            MonoEncryptedText.Text = text;
+            Console.WriteLine("({0}, {1})", bestShift, min);
+
+            for (int i = 0; i < _overrideChars.Length; i++)
+            {
+                _overrideChars[i].Text = ((char) ((_textChars[i].Key + bestShift - 'A' + 26) % 26 + 'A')).ToString().ToLower();
+            }
         }
         
         private void RestrictAlphabet(object sender, TextCompositionEventArgs e)
@@ -152,7 +243,7 @@ namespace lab_1
 
             if (result.Count == 0)
             {
-                PolyKeyLengthResult.Text = "Nu a fost gasita lungimea cheii";
+                PolyKeyLengthResult.Text = "No key length found";
                 return;
             }
             
@@ -171,20 +262,24 @@ namespace lab_1
         private void SplitText(object sender, RoutedEventArgs e)
         {
             var length = int.Parse(PolyKeyLength.Text);
-            var result = PolyAlphabetSolver.SplitToMonoAlphabet(PolyEncryptedText.Text, length);
+            splitStrings = PolyAlphabetSolver.SplitToMonoAlphabet(PolyEncryptedText.Text, length);
+            splitButtons = new List<Button>();
             
             var stackpanel = new StackPanel();
 
-            foreach (var text in result)
+            for (var index = 0; index < splitStrings.Count; index++)
             {
+                var text = splitStrings[index];
                 var button = new Button
                 {
                     Content = text,
                     Width = MeasureString(text).Width + 10,
-                    FontFamily = consolas
+                    FontFamily = consolas,
+                    Tag = index.ToString()
                 };
                 button.Click += SplitTextToMono;
-                
+
+                splitButtons.Add(button);
                 stackpanel.Children.Add(button);
             }
 
@@ -208,18 +303,70 @@ namespace lab_1
 
         private void SplitTextToMono(object sender, RoutedEventArgs e)
         {
+            MonoClearText.Text = "";
+            RootContent.Content = "";
+            MonoToPolyPanel.Visibility = Visibility.Hidden;
+            
             var button = sender as Button;
             var text = button?.Content as string;
+            currentSplit = int.Parse(button?.Tag as string);
             
             Dispatcher.BeginInvoke((Action)(() => RootTabControl.SelectedIndex = 0));
             MonoEncryptedText.Text = text ?? "";
-            MonoReturnPoly.Visibility = Visibility.Visible;
+            isPolyMode = true;
         }
 
 
         private void ApplyToPoly(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            ReplaceChars(null, null);
+            splitButtons[currentSplit].Content = MonoClearText.Text;
+            
+            Dispatcher.BeginInvoke((Action)(() => RootTabControl.SelectedIndex = 1));
+
+            PolyClearText.Text = PolyAlphabetSolver.MonoToPoly(splitStrings);
+        }
+
+        private void ReturnToMono(object sender, RoutedEventArgs e)
+        {
+            isPolyMode = false;
+            MonoEncryptedText.Text = string.Empty;
+            MonoClearText.Text = string.Empty;
+            MonoToPolyPanel.Visibility = Visibility.Hidden;
+            RootContent.Content = string.Empty;
+        }
+
+        private void ExtrapolateCaesar(object sender, RoutedEventArgs e)
+        {
+            int i = 0;
+
+            while (_overrideChars[i].Text == string.Empty)
+            {
+                i++;
+                
+                if (i >= _overrideChars.Length)
+                    return;
+            }
+            
+            
+
+            var diff = _overrideChars[i].Text.ToUpper()[0] - _textChars[i].Key;
+
+            for (int j = 0; j < _overrideChars.Length; j++)
+            {
+                if (_overrideChars[j].Text == string.Empty)
+                {
+                    int character = char.ToLower(_textChars[j].Key) + diff;
+                    
+                    if (character > 'z')
+                        character -= 26;
+                    else if (character < 'a')
+                        character += 26;
+
+
+                    _overrideChars[j].Text = ((char)character).ToString();
+                }
+            }
         }
     }
 }
