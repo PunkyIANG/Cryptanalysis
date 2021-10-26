@@ -76,6 +76,9 @@ namespace lab_1
 
         public static List<string> SplitToMonoAlphabet(string text, int keyLength)
         {
+            foreach (var s in MonoAlphabetSolver.charBlacklist) 
+                text = text.Replace(s, string.Empty);
+            
             var results = new List<string>();
             
             for (int i = 0; i < keyLength; i++)
