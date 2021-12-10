@@ -1,38 +1,7 @@
-static import des;
+import des;
 import std.stdio;
 import std.random;
-
-
-ulong getRandomBitMask(int knownBitCount) {
-    import std.container : SList;
-    
-    assert(knownBitCount > 0);
-    assert(knownBitCount < ulong.sizeof * 8);
-
-    ulong result;
-
-    auto series = SList!int(0);
-    int length = ulong.sizeof * 8;
-    
-    foreach (int index; 1..length)
-        series.insertFront(index);
-
-    
-
-    foreach (index; 0..knownBitCount)
-    {
-        int selectedIndex = uniform(0, length);
-        length--;
-
-        foreach (key; list)
-        {
-            
-        }
-    }
-    
-
-    return result;
-}
+import bitmagic;
 
 void main()
 {
@@ -40,6 +9,7 @@ void main()
     ulong[3] cleartext;
     ulong[3] encrypted;
     ulong key;
+    const numKnownBits = 40;
 
     foreach (index; 0..cleartext.length)
         cleartext[index] = uniform!ulong;
@@ -54,9 +24,14 @@ void main()
 
     writefln("Key: %016X", key);
 
+    ulong knownBitMask = getRandomMaskWithNSetBits(numKnownBits, des.parityBitsMask, 8) | des.parityBitsMask;    
 
-
+    ulong knownKeyPart = key & knownBitMask;
 
     key = 0;
+
+
+
+    
 
 }
