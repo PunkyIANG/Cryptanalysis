@@ -45,35 +45,40 @@
         <TabItem Header="Monoalphabet" TabIndex="0">
             <StackPanel>
                 <TextBlock>Text criptat:</TextBlock>
-                <TextBox Name="MonoEncryptedText" CharacterCasing="Upper" PreviewTextInput="RestrictAlphabet" />
+                <TextBox Name="MonoEncryptedText" CharacterCasing="Upper" PreviewTextInput="RestrictAlphabet" AcceptsReturn="True" />
                 <TextBlock>Text clar:</TextBlock>
-                <TextBox Name="MonoClearText" CharacterCasing="Upper" PreviewTextInput="RestrictAlphabet" />
+                <TextBox Name="MonoClearText" PreviewTextInput="RestrictAlphabet" AcceptsReturn="True" />
 
                 <StackPanel Orientation="Horizontal">
                     <Button Click="FindFrequency">Gaseste frecventa</Button>
                     <Button Name="ReplaceCharsBtn" Click="ReplaceChars" IsEnabled="False">
                         Inlocuieste text
                     </Button>
-                    <Button Click="AddSpaces">Spatii standartizate</Button>
-                    <Button Name="MonoReturnPoly" Visibility="Hidden" Click="ApplyToPoly">Aplica la polialfabet</Button>
+                    <Button Click="ExtrapolateCaesar">Extrapolate for caesar</Button>
+                    <Button Click="ExtrapolateChars">Extrapolate chars</Button>
                 </StackPanel>
 
                 <ContentControl Name="RootContent" />
+                
+                <StackPanel Name="MonoToPolyPanel" Orientation="Horizontal" Visibility="Hidden">
+                    <Button Click="ApplyToPoly">Aplica la polialfabet</Button>
+                    <Button Click="ReturnToMono">Reset</Button>
+                </StackPanel>
 
-            </StackPanel>
+                </StackPanel>
         </TabItem>
 
         <TabItem Header="Polyalphabet" TabIndex="1">
             <StackPanel>
                 <TextBlock>Text criptat:</TextBlock>
-                <TextBox Name="PolyEncryptedText" CharacterCasing="Upper" PreviewTextInput="RestrictAlphabet" />
+                <TextBox Name="PolyEncryptedText" CharacterCasing="Upper" PreviewTextInput="RestrictAlphabet" AcceptsReturn="True" />
                 
                 <StackPanel Orientation="Horizontal">
                     <Button Name="GetKeyLength" Click="CalcKeyLength">
                         Afla lungimea cheii
                     </Button>
                     <TextBlock Width="80">Lungime cheie:</TextBlock>
-                    <TextBox Name="PolyKeyLength" Style="{StaticResource CharacterTextBox}" Margin="10,5,0,0"/>
+                    <TextBox Name="PolyKeyLength" Style="{StaticResource CharacterTextBox}" Margin="10,5,0,0" />
                     <Button Name="PolySplitText" Click="SplitText">
                         Separa text
                     </Button>
@@ -82,6 +87,8 @@
                 <TextBlock Name="PolyKeyLengthResult"/>
                 
                 <ContentControl Name="PolySplitTextsContainer" />
+                
+                <TextBox Name="PolyClearText" PreviewTextInput="RestrictAlphabet" AcceptsReturn="True"/>
             </StackPanel>
         </TabItem>
     </TabControl>

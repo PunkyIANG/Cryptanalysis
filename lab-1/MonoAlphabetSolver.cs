@@ -8,9 +8,18 @@ namespace lab_1
 {
     public static class MonoAlphabetSolver
     {
+        public static string[] charBlacklist = new string[]
+        {
+            " ",
+            "\n",
+            ((char) 13).ToString()  // carriage return
+        };
+        
         public static KeyValuePair<char, int>[] GetUniqueCharacters(string text)
         {
-            text = text.Replace(" ", string.Empty);
+            foreach (var s in charBlacklist) 
+                text = text.Replace(s, string.Empty);
+
             var uniqueChars = new Dictionary<char, int>();
 
             foreach (var character in text)
@@ -24,7 +33,12 @@ namespace lab_1
             Array.Sort(arr, (x, y) 
                 => y.Value - x.Value);
 
+            // foreach (var (key, value) in arr) 
+            //     Console.WriteLine(key + " " + (int)key);
+
             return arr;
         }
+        
+        
     }
 }
