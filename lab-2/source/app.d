@@ -12,7 +12,7 @@ void main()
     ulong[3] cleartext;
     ulong[3] encrypted;
     ulong key;
-    const numKnownBits = 35;
+    const numKnownBits = 40;
 
     foreach (index; 0 .. cleartext.length)
         cleartext[index] = uniform!ulong;
@@ -25,19 +25,19 @@ void main()
         writefln("%016X -> %016X", cleartext[index], encrypted[index]);
     }
 
-    writefln("Key           : %016X", key);
-
     ulong knownBitMask = getRandomMaskWithNSetBits(numKnownBits, des.parityBitsMask, 8) | des
         .parityBitsMask;
 
     ulong knownKeyPart = key & knownBitMask;
 
-    // writefln("Known bit mask: %016X: ", knownBitMask);
-    // writefln("Known key part: %016X: ", knownKeyPart);
-    writefln("Des bit mask  : %016X: ", des.parityBitsMask);
-    // writeln();
+    writefln("Known bit mask: %016X", knownBitMask);
+    writefln("Known key part: %016X", knownKeyPart);
+    writefln("Key           : %016X", key);
 
-    // key = 0;
+    key = 0;
+
+
+
 
     shared ulong result = 0;
     ulong one = 1;
@@ -91,5 +91,4 @@ void main()
     }
 
     writefln("Found key     : %016X", result);
-    writefln("Key difference: %016X", result ^ key);
 }
