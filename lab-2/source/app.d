@@ -91,4 +91,7 @@ void main()
     }
 
     writefln("Found key     : %016X", result);
+    writeln();
+    writeln("Press any key to exit");
+    readln;
 }
