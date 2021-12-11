@@ -12,7 +12,7 @@ void main()
     ulong[3] cleartext;
     ulong[3] encrypted;
     ulong key;
-    const numKnownBits = 40;
+    const numKnownBits = 35;
 
     foreach (index; 0 .. cleartext.length)
         cleartext[index] = uniform!ulong;
@@ -45,8 +45,7 @@ void main()
     int numUnknownBits = 56 - numKnownBits;
     shared int foundKeys = 0;
 
-    foreach (index; parallel((2^^numUnknownBits).iota))
-    // int index = 0;
+    foreach (index; parallel((2 ^^ numUnknownBits).iota))
     {
         ulong currentUnsetKey = index;
         ulong currentUnsetKeyMask = 2 ^^ numUnknownBits - 1;
@@ -54,13 +53,6 @@ void main()
         ulong setKey = knownKeyPart;
         ulong setKeyMask = knownBitMask;
 
-        // writeln("Start: ");
-        // writefln("setKey: %016X: ", setKey);
-        // writefln("setKeyMask: %016X: ", setKeyMask);
-        // writefln("currentUnsetKey: %016X: ", currentUnsetKey);
-        // writefln("currentUnsetKeyMask: %016X: ", currentUnsetKeyMask);
-        // writeln();
-        
         foreach (currentBit; 0 .. 64)
         {
             if (setKeyMask & (one << currentBit))
@@ -77,42 +69,27 @@ void main()
             currentUnsetKey &= ~(one << currentBit);
             currentUnsetKeyMask &= ~(one << currentBit);
 
-            // writeln("Step ", currentBit);
-            // writefln("setKey: %016X: ", setKey);
-            // writefln("setKeyMask: %016X: ", setKeyMask);
-            // writefln("currentUnsetKey: %016X: ", currentUnsetKey);
-            // writefln("currentUnsetKeyMask: %016X: ", currentUnsetKeyMask);
-            // writeln();
         }
 
-        // writeln("Results: ");
-        // writefln("setKey: %016X: ", setKey);
-        // writefln("setKeyMask: %016X: ", setKeyMask);
-        // writefln("currentUnsetKey: %016X: ", currentUnsetKey);
-        // writefln("currentUnsetKeyMask: %016X: ", currentUnsetKeyMask);
+        if (!(setKey & des.parityBitsMask) != des.getKeyParity(setKey))
+        {
+            bool isKey = true;
 
-        // ulong parityBits = des.parityBitsMask;
+            foreach (otherIndex; 0 .. cleartext.length)
+                if (encrypted[otherIndex] != des.encrypt(cleartext[otherIndex], setKey))
+                {
+                    isKey = false;
+                    break;
+                }
 
-
-        bool isKey = true;
-
-        foreach (otherIndex; 0..cleartext.length)
-            if (encrypted[otherIndex] != des.encrypt(cleartext[otherIndex], setKey)) {
-                isKey = false;
-                break;
+            if (isKey)
+            {
+                result = setKey;
+                atomicOp!"+="(foundKeys, 1);
             }
-        
-        if (isKey){
-            result = setKey;
-            atomicOp!"+="(foundKeys, 1);
         }
     }
 
     writefln("Found key     : %016X", result);
     writefln("Key difference: %016X", result ^ key);
-    writeln("Found key count: ", foundKeys);
-
-    if ((key & des.parityBitsMask) != des.getKeyParity(key)) 
-        writefln("shit's fucked up: %016X", des.getKeyParity(key));
-
 }
