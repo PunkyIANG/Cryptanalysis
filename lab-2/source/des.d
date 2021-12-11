@@ -318,7 +318,7 @@ ulong encrypt(ulong input, ulong key) { return crypt(input, key, Yes.encrypt); }
 ulong decrypt(ulong input, ulong key) { return crypt(input, key, No.encrypt); }
 
 enum everyByteFirstBitMask = 0x01010101_01010101;
-enum parityBitsMask = everyByteFirstBitMask << 7;
+enum parityBitsMask = everyByteFirstBitMask; // << 7
 
 ulong adjustKeyParity(ulong key)
 {
